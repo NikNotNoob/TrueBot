@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const config = require('./config');
 const auth = require('./auth');
+const mongoose = require('mongoose');
+const Ratio = require('./Ratio');
 const bot = new Discord.Client();
 
 const prefix = '$';
@@ -26,7 +28,8 @@ bot.on('message', async message => {
 
     message.awaitReactions(emoteFilter, {time: config.timeout})
         .then(collected => {
-            
+            console.log(collected);
+            //let ratio = Ratio.findOneAndUpdate({ user_id: message.author.id }, { $inc : {}})
         }).catch(console.error);
 
     if(message.content.indexOf(prefix) !== 0) return;
@@ -57,5 +60,12 @@ bot.on('message', async message => {
 bot.on('disconnect', event => {
     console.log('Disconnecting...');
 });
+
+mongoose.connect(auth.database_url, {useNewUrlParser: true, useUnifiedTopology: true})
+    .then(() => {
+        console.log("Connected to the Mongodb database.");
+    }).catch((err) => {
+        console.log("Unable to connect to the Mongodb database. Error:"+err);
+    });
 
 bot.login(auth.token);
