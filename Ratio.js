@@ -6,11 +6,11 @@ const RatioSchema = new mongoose.Schema({
         required: true,
     },
     good_reacts: {
-        type: String,
+        type: Number,
         required: true,
     },
     bad_reacts: {
-        type: String,
+        type: Number,
         required: true,
     }
 });

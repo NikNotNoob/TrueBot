@@ -6,11 +6,10 @@ const Ratio = require('./Ratio');
 const bot = new Discord.Client();
 
 const prefix = '$';
-const emoteFilter = (reaction, user) => {
-    console.log(`Incoming : ${reaction.emoji.id}`);
-    return reaction.emoji.id == config.good_emote || reaction.emoji.id == config.bad_emote
+
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min)
 }
-let database;
 
 bot.once('ready', () => {
     console.log(`${bot.user.tag} has logged in.`);
@@ -25,14 +24,44 @@ bot.on('guildDelete', guild => {
     console.log(`${bot.user.tag} has left ${guild.name}.`);
 });
 
-bot.on('message', async message => {
+bot.on('message', message => {
 
     if(message.author.bot) return;
 
+    const emoteFilter = reaction => reaction.emoji.id == config.good_emote || reaction.emoji.id == config.bad_emote;
     message.awaitReactions(emoteFilter, {time: config.timeout})
-        .then(collected => {
-            console.log(collected);
-            //let ratio = Ratio.findOneAndUpdate({ user_id: message.author.id }, { $inc : {}})
+        .then(async collected => {
+            let goods = collected.get(config.good_emote);
+            let bads = collected.get(config.bad_emote);
+
+            let good_count = 0;
+            let bad_count = 0;
+
+            if(goods) {
+                good_count = goods.count;
+                if(goods.users.has(message.author.id)) good_count--;
+            }
+
+            if(bads) {
+                bad_count = bads.count;
+                if(bads.users.has(message.author.id)) bad_count--;
+            }
+
+            /*
+            console.log(`Message : ${message.content}`);
+            console.log(`Good count: ${good_count}`);
+            console.log(`Bad count: ${bad_count}`);
+            */
+
+            if(good_count || bad_count) {
+                const filter = { user_id: message.author.id };
+                const update = { $inc : {
+                    good_reacts: good_count,
+                    bad_reacts: bad_count
+                }};
+                const opts = { new: true, upsert: true }
+                let ratio = await Ratio.findOneAndUpdate(filter, update, opts);
+            }
         }).catch(console.error);
 
     if(message.content.indexOf(prefix) !== 0) return;
@@ -55,8 +84,33 @@ bot.on('message', async message => {
             message.channel.send(helpMessage);
     }
 
-    if(command === "stats" ) {
+    if(command === "rank") {
+        message.channel.send(`To be implemented...`);
+    }
 
+    if(command === "invite") {
+        message.reply(config.invite_link);
+    }
+
+    if(command === "ip") {
+        message.channel.send(`ip de ${message.author.username}: ${randomInt(1, 255)}.${randomInt(1, 255)}.${randomInt(1, 255)}.${randomInt(1, 255)}`)
+    }
+
+    if(command === "stats" ) {
+        Ratio.findOne({ user_id: message.author.id }).then(ratio => {
+
+            let good_count = (ratio == null || ratio.good_reacts === undefined) ? 0 : ratio.good_reacts;
+            let bad_count = (ratio == null || ratio.bad_reacts === undefined) ? 0 : ratio.bad_reacts;
+            let totalRatio = good_count / Math.max(1, bad_count);
+
+            const statsMessage = new Discord.RichEmbed()
+            .setColor('#00FF22')
+            .setTitle(`${message.author.username}'s stats`)
+            .addField('True reacts', good_count)
+            .addField('Sadsphere reacts', bad_count)
+            .addField('Ratio', totalRatio);
+            message.channel.send(statsMessage);
+        })
     }
 });
 
@@ -64,7 +118,7 @@ bot.on('disconnect', event => {
     console.log('Disconnecting...');
 });
 
-mongoose.connect(auth.database_url, {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(auth.database_url, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     .then(() => {
         console.log("Connected to the Mongodb database.");
     }).catch((err) => {
