@@ -113,7 +113,7 @@ bot.on('message', message => {
 
             const statsMessage = new Discord.RichEmbed()
             .setColor('#00FF22')
-            .setTitle(`${message.author.username}'s stats`)
+            .setTitle(`${user.username}'s stats`)
             .addField('True reacts', good_count)
             .addField('Sadsphere reacts', bad_count)
             .addField('Ratio', totalRatio.toFixed(2));
