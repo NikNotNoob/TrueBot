@@ -101,7 +101,11 @@ bot.on('message', message => {
     }
 
     if(command === "stats" ) {
-        Ratio.findOne({ user_id: message.author.id }).then(ratio => {
+
+        let user = message.mentions.users.first();
+        if(!user) user = message.author;
+
+        Ratio.findOne({ user_id: user.id }).then(ratio => {
 
             let good_count = (ratio == null || ratio.good_reacts === undefined) ? 0 : ratio.good_reacts;
             let bad_count = (ratio == null || ratio.bad_reacts === undefined) ? 0 : ratio.bad_reacts;
@@ -112,7 +116,7 @@ bot.on('message', message => {
             .setTitle(`${message.author.username}'s stats`)
             .addField('True reacts', good_count)
             .addField('Sadsphere reacts', bad_count)
-            .addField('Ratio', totalRatio);
+            .addField('Ratio', totalRatio.toFixed(2));
             message.channel.send(statsMessage);
         })
     }
