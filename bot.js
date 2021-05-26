@@ -6,7 +6,10 @@ const Ratio = require('./Ratio');
 const bot = new Discord.Client();
 
 const prefix = '$';
-const emoteFilter = reaction => reaction.emoji.id == config.good_emote || reaction.emoji.id == config.bad_emote;
+const emoteFilter = (reaction, user) => {
+    console.log(`Incoming : ${reaction.emoji.id}`);
+    return reaction.emoji.id == config.good_emote || reaction.emoji.id == config.bad_emote
+}
 let database;
 
 bot.once('ready', () => {
