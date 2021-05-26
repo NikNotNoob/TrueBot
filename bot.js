@@ -97,7 +97,9 @@ bot.on('message', message => {
     }
 
     if(command === "ip") {
-        message.channel.send(`ip de ${message.author.username}: ${randomInt(1, 255)}.${randomInt(1, 255)}.${randomInt(1, 255)}.${randomInt(1, 255)}`)
+        let user = message.mentions.users.first();
+        if(!user) user = message.author;
+        message.channel.send(`ip de ${user.username}: ${randomInt(1, 255)}.${randomInt(1, 255)}.${randomInt(1, 255)}.${randomInt(1, 255)}`)
     }
 
     if(command === "stats" ) {
