@@ -80,7 +80,11 @@ bot.on('message', message => {
             .setTitle('List of commands')
             .setDescription('Morgan Freeman Exclusives')
             .addField('Ping', 'Get bot latency.')
-            .addField('Help', 'Pretty much how you got this embed lol.');
+            .addField('Help', 'Pretty much how you got this embed lol.')
+            .addField('Invite', 'Invite the bot (Nik exclusive)')
+            .addField('IP', 'Doxxes you (trolled)')
+            .addField('Stats', 'Gives your ratio of trues to sadspheres')
+            .addField('Rank', 'https://tenor.com/view/rank-funny-face-black-man-gif-18421232');
             message.channel.send(helpMessage);
     }
 
