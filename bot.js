@@ -111,7 +111,7 @@ bot.on('message', message => {
 
             let good_count = (ratio == null || ratio.good_reacts === undefined) ? 0 : ratio.good_reacts;
             let bad_count = (ratio == null || ratio.bad_reacts === undefined) ? 0 : ratio.bad_reacts;
-            let totalRatio = good_count / Math.max(1, bad_count) * 100;
+            let totalRatio = good_count / Math.max(1, bad_count + good_count) * 100;
 
             const statsMessage = new Discord.RichEmbed()
             .setColor('#00FF22')
