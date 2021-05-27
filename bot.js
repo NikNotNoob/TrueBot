@@ -111,14 +111,14 @@ bot.on('message', message => {
 
             let good_count = (ratio == null || ratio.good_reacts === undefined) ? 0 : ratio.good_reacts;
             let bad_count = (ratio == null || ratio.bad_reacts === undefined) ? 0 : ratio.bad_reacts;
-            let totalRatio = good_count / Math.max(1, bad_count);
+            let totalRatio = good_count / Math.max(1, bad_count) * 100;
 
             const statsMessage = new Discord.RichEmbed()
             .setColor('#00FF22')
             .setTitle(`${user.username}'s stats`)
             .addField('True reacts', good_count)
             .addField('Sadsphere reacts', bad_count)
-            .addField('Ratio', totalRatio.toFixed(2));
+            .addField('Ratio', `${Math.trunc(totalRatio)}%`);
             message.channel.send(statsMessage);
         })
     }
