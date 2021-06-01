@@ -88,7 +88,7 @@ bot.on('message', message => {
             message.channel.send(helpMessage);
     }
 
-    if(command === "rank") {
+    /*if(command === "rank") {
         Ratio.aggregate([
             {
                 $project: {
@@ -105,7 +105,7 @@ bot.on('message', message => {
             ]).exec((err, ratios)=> {
 
             });
-    }
+    }*/
 
     if(command === "leaderboard") {
         Ratio.aggregate([
