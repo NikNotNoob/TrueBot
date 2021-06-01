@@ -142,7 +142,6 @@ bot.on('message', message => {
                         .setColor('#00FF22')
                         .setTitle(`Ratio leaderboard`);
                     ratios.forEach(ratio => {
-                        console.log(ratio);
                         leaderboardMessage.addField(`#${rank++} - ${ratio.user.username}`, `${ratio.good_reacts} : ${ratio.bad_reacts} => ${ratio.score.toFixed(2)}`);
                     });
                     message.channel.send(leaderboardMessage).then(msg => {
