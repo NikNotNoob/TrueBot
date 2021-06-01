@@ -107,7 +107,6 @@ bot.on('message', message => {
                     console.log(err);
                     message.channel.send(`An error occured... <@${config.owner_id}> lol fix me`);
                 } else {
-                    console.log(ratios);
                     let rank = 1;
                     ratios.every(ratio => {
                         if(ratio.user_id == message.author.id) {
