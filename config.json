@@ -2,5 +2,6 @@
    "good_emote": "824082954472914944",
    "bad_emote": "714304491633115208",
    "timeout": "60000",
-   "invite_link": "https://discord.com/api/oauth2/authorize?client_id=846762732837404684&permissions=8&scope=bot"
+   "invite_link": "https://discord.com/api/oauth2/authorize?client_id=846762732837404684&permissions=8&scope=bot",
+   "owner_id": "332180997653135383"
 }

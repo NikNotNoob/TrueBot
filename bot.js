@@ -89,7 +89,68 @@ bot.on('message', message => {
     }
 
     if(command === "rank") {
-        message.channel.send(`To be implemented...`);
+        Ratio.aggregate([
+            {
+                $project: {
+                    score: {
+                        $divide: ["$good_reacts", {$max: [1, "$bad_reacts"]}]
+                    }, 
+                    good_reacts: 1,
+                    bad_reacts: 1,
+                    user_id: 1
+                }
+            },
+            { $sort: {score: -1}}, 
+            { $limit: 5 }
+            ]).exec((err, ratios)=> {
+
+            });
+    }
+
+    if(command === "leaderboard") {
+        Ratio.aggregate([
+        {
+            $project: {
+                score: {
+                    $divide: ["$good_reacts", {$max: [1, "$bad_reacts"]}]
+                }, 
+                good_reacts: 1,
+                bad_reacts: 1,
+                user_id: 1
+            }
+        },
+        { $sort: {score: -1}}, 
+        { $limit: 5 }
+        ]).exec((err, ratios) => {
+            if(err) {
+                console.log(err);
+                message.channel.send(`An error occured... <@${config.owner_id}> lol fix me`);
+            } else {
+                let rank = 1;
+                let ratioPromises = [];
+                ratios.forEach(ratio => {
+                    const userPromise = new Promise((resolve, reject) => {
+                        bot.fetchUser(ratio.user_id).then(user => {
+                            ratio.user = user;
+                            resolve(ratio);
+                        })
+                    });
+                    ratioPromises.push(userPromise);
+                });
+                Promise.all(ratioPromises).then(ratios => {
+                    const leaderboardMessage = new Discord.RichEmbed()
+                        .setColor('#00FF22')
+                        .setTitle(`Ratio leaderboard`);
+                    ratios.forEach(ratio => {
+                        console.log(ratio);
+                        leaderboardMessage.addField(`#${rank++} - ${ratio.user.username}`, `${ratio.good_reacts} : ${ratio.bad_reacts} => ${ratio.score.toFixed(2)}`);
+                    });
+                    message.channel.send(leaderboardMessage).then(msg => {
+                        setTimeout(() => msg.delete(), 5000);
+                    });
+                });
+            }
+        });
     }
 
     if(command === "invite") {
@@ -97,9 +158,27 @@ bot.on('message', message => {
     }
 
     if(command === "ip") {
+        let username;
         let user = message.mentions.users.first();
-        if(!user) user = message.author;
-        message.channel.send(`ip de ${user.username}: ${randomInt(1, 255)}.${randomInt(1, 255)}.${randomInt(1, 255)}.${randomInt(1, 255)}`)
+        username = user ? user.username : args.join(' ');
+        if(!username) username = message.author.username;
+
+        if(username.toLowerCase() === "ez nuts") {
+            message.channel.send(`lol no`);
+            return;
+        }
+
+        if(username.toLowerCase() === "truebot") {
+            message.channel.send(`can't dox me... ip de ${message.author.username}: ${randomInt(1, 255)}.${randomInt(1, 255)}.${randomInt(1, 255)}.${randomInt(1, 255)}`);
+            return;
+        }
+
+        if(username.toLowerCase() === "[ppg]rusty" || username.toLowerCase() === "rusty") {
+            message.channel.send(`ip de rusty: new york`);
+            return;
+        }
+
+        message.channel.send(`ip de ${username}: ${randomInt(1, 255)}.${randomInt(1, 255)}.${randomInt(1, 255)}.${randomInt(1, 255)}`)
     }
 
     if(command === "stats" ) {
@@ -119,7 +198,9 @@ bot.on('message', message => {
             .addField('True reacts', good_count)
             .addField('Sadsphere reacts', bad_count)
             .addField('Ratio', `${Math.trunc(totalRatio)}%`);
-            message.channel.send(statsMessage);
+            message.channel.send(statsMessage).then(msg => {
+                setTimeout(() => msg.delete(), 5000);
+            });
         })
     }
 });
