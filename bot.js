@@ -3,6 +3,7 @@ const config = require('./config');
 const auth = require('./auth');
 const mongoose = require('mongoose');
 const Ratio = require('./Ratio');
+const Canvas = require('canvas');
 const bot = new Discord.Client();
 
 const prefix = '$';
@@ -13,7 +14,7 @@ function randomInt(min, max) {
 
 bot.once('ready', () => {
     console.log(`${bot.user.tag} has logged in.`);
-    bot.user.setActivity(`He's right you know`);
+    bot.user.setActivity(`He's right you know`, {type: `CUSTOM_STATUS`});
 });
 
 bot.on('guildCreate', guild => {
@@ -88,7 +89,7 @@ bot.on('message', message => {
             message.channel.send(helpMessage);
     }
 
-    /*if(command === "rank") {
+    if(command === "rank") {
         Ratio.aggregate([
             {
                 $project: {
@@ -100,12 +101,45 @@ bot.on('message', message => {
                     user_id: 1
                 }
             },
-            { $sort: {score: -1}}, 
-            { $limit: 5 }
-            ]).exec((err, ratios)=> {
+            { $sort: {score: -1, good_reacts: -1, bad_reacts: 1}}
+            ]).exec(async (err, ratios) => {
+                if(err) {
+                    console.log(err);
+                    message.channel.send(`An error occured... <@${config.owner_id}> lol fix me`);
+                } else {
+                    console.log(ratios);
+                    let rank = 1;
+                    ratios.every(ratio => {
+                        if(ratio.user_id == message.author.id) {
+                            return false;
+                        }
+                        rank++;
+                        return true;
+                    });
 
+                    const rankImage = './rank.png';
+
+                    const background = await Canvas.loadImage(rankImage);
+                    const canvas = Canvas.createCanvas(background.width, background.height);
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(background, 0, 0, background.width, background.height);
+
+                    ctx.font = '48px sans-serif';
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillText(rank, canvas.width / 1.43, canvas.height / 2.8);
+
+                    ctx.font = '32px sans-serif';
+                    ctx.fillText(message.author.username, canvas.width / 3.34, canvas.height / 1.7);
+
+                    ctx.font = '20px sans-serif';
+                    ctx.fillStyle = '#828282';
+                    ctx.fillText(`#${message.author.discriminator}`, canvas.width / 2.65, canvas.height / 1.7);
+
+                    const attachment = new Discord.Attachment(canvas.toBuffer(), 'rank.png');
+                    message.channel.send(attachment);
+                }
             });
-    }*/
+    }
 
     if(command === "leaderboard") {
         Ratio.aggregate([
@@ -119,7 +153,7 @@ bot.on('message', message => {
                 user_id: 1
             }
         },
-        { $sort: {score: -1}}, 
+        { $sort: {score: -1, good_reacts: -1, bad_reacts: 1}}, 
         { $limit: 5 }
         ]).exec((err, ratios) => {
             if(err) {

@@ -1,10 +1,11 @@
 {
-  "name": "democracy-bot",
+  "name": "true-bot",
   "version": "1.0.0",
-  "description": "User consensus bot",
+  "description": "Weird bot",
   "main": "bot.js",
   "author": "NikNotNoob",
   "dependencies": {
+    "canvas": "^2.8.0",
     "discord.io": "^2.5.3",
     "discord.js": "^11.6.4",
     "mongodb": "^3.6.8",
