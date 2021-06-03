@@ -84,8 +84,10 @@ bot.on('message', message => {
             .addField('Help', 'Pretty much how you got this embed lol.')
             .addField('Invite', 'Invite the bot (Nik exclusive)')
             .addField('IP', 'Doxxes you (trolled)')
+            .addField('IQ', 'Tells you how retarded you are')
             .addField('Stats', 'Gives your ratio of trues to sadspheres')
-            .addField('Rank', 'https://tenor.com/view/rank-funny-face-black-man-gif-18421232');
+            .addField('Rank', 'Gets your global ratio rank (too lazy to make it server only)')
+            .addField('Leaderboard', `Gets global top ${config.leaderboard_count} people`);
             message.channel.send(helpMessage);
     }
 
@@ -153,7 +155,7 @@ bot.on('message', message => {
             }
         },
         { $sort: {score: -1, good_reacts: -1, bad_reacts: 1}}, 
-        { $limit: 5 }
+        { $limit: config.leaderboard_count }
         ]).exec((err, ratios) => {
             if(err) {
                 console.log(err);
@@ -211,6 +213,25 @@ bot.on('message', message => {
         }
 
         message.channel.send(`ip de ${username}: ${randomInt(1, 255)}.${randomInt(1, 255)}.${randomInt(1, 255)}.${randomInt(1, 255)}`)
+    }
+
+    if(command === "iq") {
+        let username;
+        let user = message.mentions.users.first();
+        username = user ? user.username : args.join(' ');
+        if(!username) username = message.author.username;
+
+        if(username.toLowerCase() === "nik" || username.toLowerCase().includes(" nik ")) {
+            message.channel.send(`iq de ${username}: 180`);
+            return;
+        }
+
+        if(username.toLowerCase() === "candy" || username.toLowerCase().includes(" candy ")) {
+            message.channel.send(`iq de ${username}: 3`);
+            return;
+        }
+
+        message.channel.send(`iq de ${username}: ${randomInt(56, 145)}`)
     }
 
     if(command === "stats" ) {
