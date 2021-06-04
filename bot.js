@@ -207,6 +207,12 @@ bot.on('message', message => {
     }
 
     if(command === "ip") {
+
+        if(message.content.includes('@')) {
+            message.channel.send(`I ain't tagging fuck you`);
+            return;
+        }
+
         let username;
         let user = message.mentions.users.first();
         username = user ? user.username : args.join(' ');
@@ -231,6 +237,12 @@ bot.on('message', message => {
     }
 
     if(command === "iq") {
+
+        if(message.content.includes('@')) {
+            message.channel.send(`I ain't tagging fuck you`);
+            return;
+        }
+
         let username;
         let user = message.mentions.users.first();
         username = user ? user.username : args.join(' ');
