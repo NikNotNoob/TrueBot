@@ -4,12 +4,27 @@ const auth = require('./auth');
 const mongoose = require('mongoose');
 const Ratio = require('./Ratio');
 const Canvas = require('canvas');
-const bot = new Discord.Client();
+const bot = new Discord.Client({disableEveryone: true});
 
 const prefix = '$';
 
 function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+// Standard Normal variate using Box-Muller transform.
+function randn_bm() {
+    let u = 0, v = 0;
+    while(u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+    while(v === 0) v = Math.random();
+    let num = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+    num = num / 10.0 + 0.5; // Translate to 0 -> 1
+    if (num > 1 || num < 0) return randn_bm() // resample between 0 and 1
+    return num
+  }
+
+function randomIntNormalDistribution(min, max) {
+    return Math.floor(randn_bm() * (max - min + 1) + min)
 }
 
 bot.once('ready', () => {
@@ -231,7 +246,7 @@ bot.on('message', message => {
             return;
         }
 
-        message.channel.send(`iq de ${username}: ${randomInt(56, 145)}`)
+        message.channel.send(`iq de ${username}: ${randomIntNormalDistribution(56, 145)}`)
     }
 
     if(command === "stats" ) {
@@ -258,9 +273,9 @@ bot.on('message', message => {
     }
 });
 
-bot.on('disconnect', event => {
-    console.log('Disconnecting...');
-});
+bot.on('error', err => {
+    console.error(err);
+})
 
 mongoose.connect(auth.database_url, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     .then(() => {
