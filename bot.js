@@ -283,6 +283,13 @@ bot.on('message', message => {
             });
         })
     }
+
+    if(command == "shutdown" && message.member.hasPermission('ADMINISTRATOR')) {
+        bot.destroy();
+        console.log(`Shutting down...`);
+        message.channel.send('Shutting down');
+        process.exit();
+    }
 });
 
 bot.on('error', err => {
