@@ -194,9 +194,7 @@ bot.on('message', message => {
                     ratios.forEach(ratio => {
                         leaderboardMessage.addField(`#${rank++} - ${ratio.user.username}`, `${ratio.good_reacts} : ${ratio.bad_reacts} => ${ratio.score.toFixed(2)}`);
                     });
-                    message.channel.send(leaderboardMessage).then(msg => {
-                        setTimeout(() => msg.delete(), 5000);
-                    });
+                    message.channel.send(leaderboardMessage);
                 });
             }
         });
@@ -278,9 +276,7 @@ bot.on('message', message => {
             .addField('True reacts', good_count)
             .addField('Sadsphere reacts', bad_count)
             .addField('Ratio', `${Math.trunc(totalRatio)}%`);
-            message.channel.send(statsMessage).then(msg => {
-                setTimeout(() => msg.delete(), 5000);
-            });
+            message.channel.send(statsMessage);
         })
     }
 
