@@ -44,30 +44,34 @@ bot.on('message', message => {
 
     if(message.author.bot) return;
 
-    const emoteFilter = reaction => reaction.emoji.id == config.good_emote || reaction.emoji.id == config.bad_emote;
+    const emoteFilter = reaction => config.good_emotes.includes(reaction.emoji.id) || config.bad_emotes.includes(reaction.emoji.id);
     message.awaitReactions(emoteFilter, {time: config.timeout})
         .then(async collected => {
-            let goods = collected.get(config.good_emote);
-            let bads = collected.get(config.bad_emote);
 
             let good_count = 0;
             let bad_count = 0;
 
-            if(goods) {
-                good_count = goods.count;
-                if(goods.users.has(message.author.id)) good_count--;
-            }
+            config.good_emotes.forEach(emojiId => {
+                let goods = collected.get(emojiId);
 
-            if(bads) {
-                bad_count = bads.count;
-                if(bads.users.has(message.author.id)) bad_count--;
-            }
+                if(goods) {
+                    good_count += goods.count;
+                    if(goods.users.has(message.author.id)) good_count--;
+                }
+            });
 
-            /*
+            config.bad_emotes.forEach(emojiId => {
+                let bads = collected.get(emojiId);
+
+                if(bads) {
+                    bad_count += bads.count;
+                    if(bads.users.has(message.author.id)) bad_count--;
+                }
+            });
+
             console.log(`Message : ${message.content}`);
             console.log(`Good count: ${good_count}`);
             console.log(`Bad count: ${bad_count}`);
-            */
 
             if(good_count || bad_count) {
                 const filter = { user_id: message.author.id };
