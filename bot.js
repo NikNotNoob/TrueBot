@@ -90,6 +90,14 @@ bot.on('message', message => {
         message.reply(`He's ponging you know. ${Math.round(message.client.ping)} ms`);
     }
 
+    if(command === 'resetbadcount') {
+        message.channel.send(`My PayPal : paypal.me/niknotnoob`);
+    }
+
+    if(command === 'resetgoodcount') {
+        message.channel.send(`why?`);
+    }
+
     if(command === 'help') {
         const helpMessage = new Discord.RichEmbed()
             .setColor('#00FF22')
@@ -102,7 +110,9 @@ bot.on('message', message => {
             .addField('IQ', 'Tells you how retarded you are')
             .addField('Stats', 'Gives your ratio of trues to sadspheres')
             .addField('Rank', 'Gets your global ratio rank (too lazy to make it server only)')
-            .addField('Leaderboard', `Gets global top ${config.leaderboard_count} people`);
+            .addField('Leaderboard', `Gets global top ${config.leaderboard_count} people`)
+            .addField('ResetBadCount', `Resets your bad reaction count`)
+            .addField('ResetGoodCount', `Resets your good reaction count`);
             message.channel.send(helpMessage);
     }
 
