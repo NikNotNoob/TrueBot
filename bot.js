@@ -69,9 +69,11 @@ bot.on('message', message => {
                 }
             });
 
+            /*
             console.log(`Message : ${message.content}`);
             console.log(`Good count: ${good_count}`);
             console.log(`Bad count: ${bad_count}`);
+            */
 
             if(good_count || bad_count) {
                 const filter = { user_id: message.author.id };
