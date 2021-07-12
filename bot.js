@@ -149,7 +149,7 @@ bot.on('message', message => {
                         return true;
                     });
 
-                    const rankImage = './rank.png';
+                    const rankImage = path.resolve(__dirname, 'rank.png');
 
                     const background = await Canvas.loadImage(rankImage);
                     const canvas = Canvas.createCanvas(background.width, background.height);
@@ -301,6 +301,12 @@ bot.on('message', message => {
         console.log(`Shutting down...`);
         message.channel.send('Shutting down');
         process.exit();
+    }
+
+    if(command == "say" && message.author.id == config.owner_id) {
+        if(!args) return;
+        const channel = bot.channels.get(args[0]);
+        channel.send(`${args.slice(1).join(' ')}`);
     }
 });
 
