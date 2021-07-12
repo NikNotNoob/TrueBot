@@ -4,6 +4,7 @@ const auth = require('./auth');
 const mongoose = require('mongoose');
 const Ratio = require('./Ratio');
 const Canvas = require('canvas');
+const path = require('path');
 const bot = new Discord.Client({disableEveryone: true});
 
 const prefix = '$';
