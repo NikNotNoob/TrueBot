@@ -151,7 +151,6 @@ bot.on('message', message => {
                     });
 
                     const rankImage = path.resolve(__dirname, 'rank.png');
-                    console.log(rankImage);
 
                     const background = await Canvas.loadImage(rankImage);
                     const canvas = Canvas.createCanvas(background.width, background.height);
